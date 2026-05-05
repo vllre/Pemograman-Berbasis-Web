@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — SITTA UT</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body onload="setGreeting()">
+
+    <div class="app-wrapper">
+        <nav class="sidebar">
+            <div class="sidebar-header"><h3>SITTA UT</h3></div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html">🏠 Dashboard</a></li>
+                <li><a href="stok.html">📦 Informasi Bahan Ajar</a></li>
+                <li><a href="tracking.html">🚚 Tracking Pengiriman</a></li>
+                
+                <li>
+                    <button class="dropdown-btn" onclick="toggleDropdown()">📊 Laporan ▼</button>
+                    <div id="dropLaporan" class="dropdown-container">
+                        <a href="#">📉 Monitoring Progress DO</a>
+                        <a href="#">📋 Rekap Bahan Ajar</a>
+                    </div>
+                </li>
+                
+                <li style="margin-top: 50px;">
+                    <a href="login.html" style="color: #ff6666;">🚪 Keluar</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <h3 id="greeting">Selamat Pagi</h3> </div>
+                <div class="app-title">
+                    <strong>Sistem Informasi Tiras & Distribusi</strong>
+                </div>
+            </header>
+
+            <div class="container">
+                <h2>Selamat Datang di SITTA</h2>
+                <p>Gunakan menu di sebelah kiri untuk mengelola pemesanan dan distribusi bahan ajar Universitas Terbuka.</p>
+                
+                <div style="display: flex; gap: 20px; margin-top: 30px;">
+                    <div style="background: white; padding: 20px; border-radius: 8px; flex: 1; border-left: 5px solid #ffcc00;">
+                        <h4>Stok Tersedia</h4>
+                        <p style="font-size: 24px; font-weight: bold;">1,204</p>
+                    </div>
+                    <div style="background: white; padding: 20px; border-radius: 8px; flex: 1; border-left: 5px solid #003366;">
+                        <h4>Pengiriman Aktif</h4>
+                        <p style="font-size: 24px; font-weight: bold;">12</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

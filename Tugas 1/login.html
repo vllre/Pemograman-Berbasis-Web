@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — SITTA Universitas Terbuka</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-page">
+
+  <div class="login-card">
+    <h2>SITTA UT</h2>
+    <p>Sistem Informasi Tiras & Distribusi</p>
+
+    <div class="login-form">
+      <label for="email">Alamat Email</label>
+      <input type="email" id="email" placeholder="email@ut.ac.id">
+
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="••••••••">
+
+      <div style="text-align: right; margin-top: -10px; margin-bottom: 15px;">
+        <a href="#" class="text-link" onclick="openModal('modalLupa')">Lupa Password?</a>
+      </div>
+
+      <button type="button" id="btnLogin" onclick="doLogin()">Masuk</button>
+      
+      <div style="text-align: center; margin-top: 15px; font-size: 14px;">
+        Belum punya akun? <a href="#" class="text-link" onclick="openModal('modalDaftar')">Daftar Sekarang</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Lupa Password -->
+  <div id="modalLupa" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Lupa Password</h3>
+      <p>Masukkan email Anda untuk reset password.</p>
+      <input type="email" placeholder="email@ut.ac.id" style="width:100%; margin-bottom: 15px;">
+      <button onclick="closeModal('modalLupa'); alert('Tautan reset password telah dikirim ke email Anda.')" style="width:100%">Kirim Reset</button>
+      <button onclick="closeModal('modalLupa')" style="width:100%; margin-top:10px; background:#ddd; color:#333;">Batal</button>
+    </div>
+  </div>
+
+  <!-- Modal Daftar -->
+  <div id="modalDaftar" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Daftar Akun Baru</h3>
+      <p>Silakan hubungi administrator sistem untuk mendaftar akun SITTA.</p>
+      <div style="background:#f4f7f6; padding:10px; border-radius:5px; margin-bottom:15px; text-align: left;">
+        <strong>Email:</strong> admin@ut.ac.id<br>
+        <strong>Telp:</strong> (021) 7490941
+      </div>
+      <button onclick="closeModal('modalDaftar')" style="width:100%">Mengerti</button>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>

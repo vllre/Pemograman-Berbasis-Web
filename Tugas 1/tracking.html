@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking Pengiriman — SITTA UT</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-wrapper">
+        <nav class="sidebar">
+            <div class="sidebar-header"><h3>SITTA UT</h3></div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html">🏠 Dashboard</a></li>
+                <li><a href="stok.html">📦 Informasi Bahan Ajar</a></li>
+                <li><a href="tracking.html">🚚 Tracking Pengiriman</a></li>
+                <li>
+                    <button class="dropdown-btn" onclick="toggleDropdown()">📊 Laporan ▼</button>
+                    <div id="dropLaporan" class="dropdown-container">
+                        <a href="#">📉 Monitoring Progress DO</a>
+                        <a href="#">📋 Rekap Bahan Ajar</a>
+                    </div>
+                </li>
+                <li style="margin-top: 50px;">
+                    <a href="login.html" style="color: #ff6666;">🚪 Keluar</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="main-content">
+            <header class="top-bar"><strong>Lacak Pengiriman</strong></header>
+            <div class="content-body">
+                <div class="card">
+                    <label>Nomor Delivery Order (DO):</label><br>
+                    <input type="text" id="noDO" placeholder="Contoh: 2023001234" style="width: 300px;">
+                    <button onclick="trackOrder()">Cari Paket</button>
+                </div>
+                
+                <div id="result" class="card" style="display:none;">
+                    <div id="trackHeader" style="background:var(--ut-blue); color:white; padding:15px; border-radius:5px;"></div>
+                    <div id="trackDetails" style="padding:15px 0;"></div>
+                    <h4>Riwayat Perjalanan:</h4>
+                    <ul id="trackHistory" style="line-height: 2;"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/data.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
