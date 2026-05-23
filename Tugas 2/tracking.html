@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Tracking Pengiriman Delivery Order (DO) Bahan Ajar UT">
+    <title>SITTA UT — Tracking Delivery Order</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+</head>
+<body>
+
+    <div class="app-wrapper" id="app" v-cloak>
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <span class="brand">SITTA UT</span>
+                    <span class="sub-brand">Tiras & Distribusi</span>
+                </div>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="index.html">🏠 Dashboard</a></li>
+                <li><a href="stok.html">📦 Stok Bahan Ajar</a></li>
+                <li class="active"><a href="tracking.html">🚚 Tracking Delivery Order</a></li>
+                <li style="margin-top: auto; padding-top: 50px;">
+                    <a href="#" style="color: #ff8888;">🚪 Keluar</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <h3>🚚 Tracking & Distribusi</h3>
+                </div>
+                <div class="app-title">
+                    <strong>Sistem Informasi Tiras & Distribusi UT</strong>
+                </div>
+            </header>
+
+            <main class="content-body">
+                <div class="container">
+                    <div class="page-header">
+                        <div>
+                            <h2>Tracking Delivery Order (DO)</h2>
+                            <p>Buat pemesanan baru, dapatkan nomor DO otomatis, dan lacak perjalanan paket bahan ajar mahasiswa.</p>
+                        </div>
+                        <button class="btn btn-primary" @click="showAddDoForm = !showAddDoForm">
+                            {{ showAddDoForm ? '✕ Tutup Form' : '➕ Buat DO Baru' }}
+                        </button>
+                    </div>
+
+                    <div class="grid grid-2">
+                        <div>
+                            <div class="card">
+                                <div class="card-title-bar">
+                                    <h3>Lacak Pengiriman</h3>
+                                </div>
+                                <div class="form-group" style="display: flex; gap: 8px;">
+                                    <input type="text" v-model.trim="searchDoNum" placeholder="Masukkan Nomor DO (Misal: DO2025-0001)" class="form-control" style="margin-bottom:0;" @keyup.enter="performSearch">
+                                    <button class="btn btn-primary" @click="performSearch" style="white-space: nowrap;">🔍 Cari DO</button>
+                                </div>
+                                <div style="margin-top: 10px;">
+                                    <small style="color: var(--text-muted);">
+                                        DO Tersedia untuk dicoba: <span v-for="(val, key) in trackingData" :key="key" style="background:#e2e8f0; padding:2px 6px; border-radius:4px; margin-right:5px; cursor:pointer;" @click="searchDoNum = key; performSearch();">{{ key }}</span>
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="card" v-if="activeTracking" style="animation: slideUp 0.3s ease-out;">
+                                <div class="card-title-bar">
+                                    <h3>Status Pengiriman</h3>
+                                    <span class="badge badge-success">{{ activeTracking.status }}</span>
+                                </div>
+                                
+                                <div style="margin-bottom: 20px; font-size: 0.95rem;">
+                                    <div class="grid grid-2">
+                                        <p><strong>NIM:</strong> {{ activeTracking.nim }}</p>
+                                        <p><strong>Nama Mahasiswa:</strong> {{ activeTracking.nama }}</p>
+                                    </div>
+                                    <div class="grid grid-2" style="margin-top: 8px;">
+                                        <p><strong>Ekspedisi:</strong> {{ activeTracking.ekspedisi }}</p>
+                                        <p><strong>Paket Bahan Ajar:</strong> {{ activeTracking.paket }}</p>
+                                    </div>
+                                    <div class="grid grid-2" style="margin-top: 8px;">
+                                        <p><strong>Tanggal Kirim:</strong> {{ activeTracking.tanggalKirim }}</p>
+                                        <p><strong>Total Biaya:</strong> <strong style="color:var(--ut-blue);">Rp {{ activeTracking.total.toLocaleString('id-ID') }}</strong></p>
+                                    </div>
+                                </div>
+
+                                <div style="border-top: 1px solid var(--border-color); padding-top: 15px;">
+                                    <h4>Riwayat Perjalanan Paket</h4>
+                                    
+                                    <div class="timeline">
+                                        <div v-for="(step, idx) in activeTracking.perjalanan" :key="idx" class="timeline-item" :class="{ active: idx === 0 }">
+                                            <div class="timeline-time">{{ step.waktu }}</div>
+                                            <div class="timeline-desc">{{ step.keterangan }}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="background: #f8fafc; border: 1px solid var(--border-color); padding: 15px; border-radius: var(--radius-md); margin-top: 20px;">
+                                        <h5 style="margin-bottom: 10px;">➕ Update Status Perjalanan</h5>
+                                        <div class="form-group">
+                                            <input type="text" v-model="newTimelineDesc" placeholder="Keterangan Perjalanan Baru (misal: Sampai di Hub Surabaya)" class="form-control">
+                                        </div>
+                                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                                            <select v-model="newTimelineStatus" class="form-control" style="width: 180px; margin-bottom:0;">
+                                                <option value="Dalam Perjalanan">Dalam Perjalanan</option>
+                                                <option value="Sampai Tujuan">Sampai Tujuan</option>
+                                                <option value="Selesai Antar">Selesai Antar</option>
+                                            </select>
+                                            <button class="btn btn-primary btn-sm" @click="addTimelineStep">Tambah Status</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-show="showAddDoForm" style="animation: slideUp 0.3s ease-out;">
+                            <div class="card">
+                                <div class="card-title-bar">
+                                    <h3>Form Input Delivery Order</h3>
+                                </div>
+                                <form @submit.prevent="createNewDo">
+                                    <div class="form-group">
+                                        <label for="newDoNum">Nomor DO</label>
+                                        <input type="text" id="newDoNum" :value="nextDoNumber" class="form-control" disabled style="background:#f1f5f9; font-weight:700; color:var(--ut-blue);">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="newNIM">NIM Mahasiswa <span style="color:red;">*</span></label>
+                                        <input type="text" id="newNIM" v-model.trim="newDoForm.nim" placeholder="Misal: 043289123" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="newNama">Nama Lengkap Mahasiswa <span style="color:red;">*</span></label>
+                                        <input type="text" id="newNama" v-model.trim="newDoForm.nama" placeholder="Misal: Budi Santoso" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="newEkspedisi">Ekspedisi Pilihan <span style="color:red;">*</span></label>
+                                        <select id="newEkspedisi" v-model="newDoForm.ekspedisi" required>
+                                            <option value="" disabled>Pilih Layanan Ekspedisi</option>
+                                            <option v-for="exp in pengirimanList" :key="exp.kode" :value="exp.nama">
+                                                {{ exp.nama }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Paket dropdown -->
+                                    <div class="form-group">
+                                        <label for="newPaket">Paket Bahan Ajar <span style="color:red;">*</span></label>
+                                        <select id="newPaket" v-model="newDoForm.paketCode" required>
+                                            <option value="" disabled>Pilih Paket Bahan Ajar</option>
+                                            <option v-for="p in paket" :key="p.kode" :value="p.kode">
+                                                {{ p.kode }} — {{ p.nama }}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div v-if="selectedPaketDetails" style="background:var(--success-bg); border: 1px solid rgba(16,185,129,0.2); padding:16px; border-radius:var(--radius-md); margin-bottom:16px; animation: fadeIn 0.3s ease;">
+                                        <h4 style="color:var(--success); font-size:0.9rem; margin-bottom:6px;">📦 Detail Isi Paket Terpilih:</h4>
+                                        <p style="font-size:0.875rem; margin-bottom:4px;"><strong>Nama Paket:</strong> {{ selectedPaketDetails.nama }}</p>
+                                        <div style="display:flex; flex-wrap:wrap; gap:6px; margin: 8px 0;">
+                                            <span v-for="bookCode in selectedPaketDetails.isi" :key="bookCode" style="background:#ffffff; border:1px solid var(--border-color); padding:3px 8px; border-radius:4px; font-size:0.75rem; font-weight:600;">
+                                                📖 {{ bookCode }}
+                                            </span>
+                                        </div>
+                                        <p style="font-size:0.875rem;"><strong>Harga Paket:</strong> <span style="color:var(--ut-blue); font-weight:700;">Rp {{ selectedPaketDetails.harga.toLocaleString('id-ID') }}</span></p>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="newTanggal">Tanggal Kirim</label>
+                                        <input type="date" id="newTanggal" v-model="newDoForm.tanggalKirim" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="newTotal">Total Harga (Otomatis)</label>
+                                        <input type="text" id="newTotal" :value="'Rp ' + (newDoForm.total ? newDoForm.total.toLocaleString('id-ID') : 0)" class="form-control" disabled style="background:#f1f5f9; font-weight:700; color:var(--success);">
+                                    </div>
+
+                                    <div class="modal-actions" style="margin-top: 10px;">
+                                        <button type="button" class="btn btn-secondary" @click="resetDoForm">Batal</button>
+                                        <button type="submit" class="btn btn-primary">Submit DO Baru</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="js/tracking-app.js"></script>
+</body>
+</html>

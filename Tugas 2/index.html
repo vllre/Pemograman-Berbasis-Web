@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dashboard Sistem Informasi Tiras & Distribusi Bahan Ajar (SITTA) Universitas Terbuka">
+    <title>SITTA UT — Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="app-wrapper" id="app">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <span class="brand">SITTA UT</span>
+                    <span class="sub-brand">Tiras & Distribusi</span>
+                </div>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active"><a href="index.html">🏠 Dashboard</a></li>
+                <li><a href="stok.html">📦 Stok Bahan Ajar</a></li>
+                <li><a href="tracking.html">🚚 Tracking Delivery Order</a></li>
+                <li style="margin-top: auto; padding-top: 50px;">
+                    <a href="#" style="color: #ff8888;">🚪 Keluar</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <h3 id="greeting">Selamat Datang di SITTA</h3>
+                </div>
+                <div class="app-title">
+                    <strong>Universitas Terbuka</strong>
+                </div>
+            </header>
+
+            <main class="content-body">
+                <div class="container">
+                    <div class="page-header">
+                        <div>
+                            <h2>Dashboard Utama</h2>
+                            <p>Sistem Pemesanan & Distribusi Bahan Ajar</p>
+                        </div>
+                    </div>
+
+                    <!-- Welcome Card -->
+                    <div class="card" style="background: linear-gradient(135deg, var(--ut-blue) 0%, var(--ut-blue-light) 100%); color: #ffffff;">
+                        <h2 style="font-weight: 700; margin-bottom: 8px; color: var(--ut-yellow);">Selamat Bekerja!</h2>
+                        <p style="opacity: 0.9; max-width: 600px; font-size: 0.95rem;">
+                            SITTA (Sistem Informasi Tiras & Distribusi) dirancang untuk membantu Anda memantau ketersediaan stok bahan ajar di seluruh UT-Daerah (UPBJJ) secara real-time dan melacak pengiriman Delivery Order (DO) ke mahasiswa secara efisien.
+                        </p>
+                    </div>
+
+                    <!-- Dashboard Portal Grid -->
+                    <div class="portal-grid">
+                        <a href="stok.html" class="portal-card">
+                            <div class="icon">📦</div>
+                            <h3>Stok Bahan Ajar</h3>
+                            <p>Pantau stok bahan ajar, edit jumlah ketersediaan, filter berdasarkan UT-Daerah & kategori, serta re-order stok kosong/menipis.</p>
+                        </a>
+                        <a href="tracking.html" class="portal-card">
+                            <div class="icon">🚚</div>
+                            <h3>Tracking DO</h3>
+                            <p>Buat pengiriman baru, lacak status pengiriman Delivery Order (DO) berdasarkan NIM/Nomor DO secara instant menggunakan lini masa pengiriman.</p>
+                        </a>
+                    </div>
+
+                    <!-- System Info -->
+                    <div class="card" style="margin-top: 30px;">
+                        <div class="card-title-bar">
+                            <h3>Ringkasan Status Sistem</h3>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; gap: 20px;">
+                            <div style="flex: 1; background: #f1f5f9; padding: 20px; border-radius: var(--radius-md); border-left: 4px solid var(--ut-blue);">
+                                <span style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">
+                                    Sistem Framework
+                                </span>
+                                <h4 style="font-size: 1.5rem; font-weight: 700; color: var(--ut-blue); margin-top: 5px;">
+                                    Vue.js (Vue 2)
+                                </h4>
+                            </div>
+
+                            <div style="flex: 1; background: #f1f5f9; padding: 20px; border-radius: var(--radius-md); border-left: 4px solid var(--success);">
+                                <span style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">
+                                    Penyimpanan Lokal
+                                </span>
+                                <h4 style="font-size: 1.5rem; font-weight: 700; color: var(--success); margin-top: 5px;">
+                                    LocalStorage Sync
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const hour = new Date().getHours();
+        const greetElement = document.getElementById("greeting");
+        let text = "Selamat Malam, Operator SITTA";
+        if (hour < 11) text = "Selamat Pagi, Operator SITTA";
+        else if (hour < 15) text = "Selamat Siang, Operator SITTA";
+        else if (hour < 19) text = "Selamat Sore, Operator SITTA";
+        greetElement.innerText = text;
+    </script>
+</body>
+</html>
