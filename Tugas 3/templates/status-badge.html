@@ -1,0 +1,4 @@
+<div class="status-cell" @mouseenter="hover = true" @mouseleave="hover = false">
+    <span :class="badgeClass">{{ icon }} {{ label }}</span>
+    <div class="tooltip-catatan" v-if="hover && hasCatatan" v-html="catatan"></div>
+</div>

@@ -1,0 +1,179 @@
+<div>
+    <div class="page-header">
+        <div>
+            <h2>Manajemen Stok Bahan Ajar</h2>
+            <p>Pantau, filter, edit, dan tambah data ketersediaan bahan ajar Universitas Terbuka.</p>
+        </div>
+        <button class="btn btn-primary" @click="showAddForm = !showAddForm">
+            {{ showAddForm ? '✕ Tutup Form' : '➕ Tambah Bahan Ajar' }}
+        </button>
+    </div>  
+
+    <!-- Form Tambah -->
+    <div class="card" v-show="showAddForm" style="animation: slideUp 0.3s ease-out;">
+        <div class="card-title-bar"><h3>Form Tambah Bahan Ajar Baru</h3></div>
+        <form @submit.prevent="addNewStok">
+            <div class="grid grid-3">
+                <div class="form-group">
+                    <label>Kode MK <span style="color:red">*</span></label>
+                    <input type="text" v-model.trim="newForm.kode" placeholder="EKMA4116" required @keyup.enter="addNewStok">
+                </div>
+                <div class="form-group">
+                    <label>Nama/Judul MK <span style="color:red">*</span></label>
+                    <input type="text" v-model.trim="newForm.judul" placeholder="Pengantar Manajemen" required @keyup.enter="addNewStok">
+                </div>
+                <div class="form-group">
+                    <label>Kategori <span style="color:red">*</span></label>
+                    <select v-model="newForm.kategori" required>
+                        <option value="" disabled>Pilih Kategori</option>
+                        <option v-for="cat in kategoriList" :key="cat" :value="cat">{{ cat }}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid grid-3">
+                <div class="form-group">
+                    <label>UT-Daerah <span style="color:red">*</span></label>
+                    <select v-model="newForm.upbjj" required>
+                        <option value="" disabled>Pilih UT Daerah</option>
+                        <option v-for="loc in upbjjList" :key="loc" :value="loc">{{ loc }}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Lokasi Rak <span style="color:red">*</span></label>
+                    <input type="text" v-model.trim="newForm.lokasiRak" placeholder="R1-A3" required>
+                </div>
+                <div class="form-group">
+                    <label>Harga (Rp) <span style="color:red">*</span></label>
+                    <input type="number" v-model.number="newForm.harga" placeholder="60000" min="0" required>
+                </div>
+            </div>
+            <div class="grid grid-3">
+                <div class="form-group">
+                    <label>Stok Awal (Qty) <span style="color:red">*</span></label>
+                    <input type="number" v-model.number="newForm.qty" placeholder="10" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Safety Stock <span style="color:red">*</span></label>
+                    <input type="number" v-model.number="newForm.safety" placeholder="15" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Catatan (HTML)</label>
+                    <input type="text" v-model="newForm.catatanHTML" placeholder="<strong>Edisi Baru</strong>">
+                </div>
+            </div>
+            <div class="modal-actions" style="margin-top:10px;">
+                <button type="button" class="btn btn-secondary" @click="resetForm">Reset</button>
+                <button type="submit" class="btn btn-primary">Simpan Bahan Ajar</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Filter & Sort -->
+    <div class="card">
+        <div class="card-title-bar"><h3>Filter &amp; Urutkan Data</h3></div>
+        <div class="filters-bar">
+            <div class="filter-item">
+                <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Filter UT-Daerah</label>
+                <select v-model="filterUpbjj" class="form-control">
+                    <option value="">Semua UT-Daerah</option>
+                    <option v-for="loc in upbjjList" :key="loc" :value="loc">{{ loc }}</option>
+                </select>
+            </div>
+            <div class="filter-item" v-if="filterUpbjj" style="animation:fadeIn 0.3s ease;">
+                <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Filter Kategori (Dependent)</label>
+                <select v-model="filterKategori" class="form-control">
+                    <option value="">Semua Kategori</option>
+                    <option v-for="cat in kategoriList" :key="cat" :value="cat">{{ cat }}</option>
+                </select>
+            </div>
+            <div class="filter-item" style="min-width:230px;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:8px;">
+                <label class="checkbox-group" style="margin-bottom:0;">
+                    <input type="checkbox" v-model="filterReorderOnly">
+                    <span style="font-size:0.875rem;font-weight:500;">Butuh Re-order Only</span>
+                </label>
+            </div>
+            <div class="filter-item">
+                <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Urutkan</label>
+                <select v-model="sortBy" class="form-control">
+                    <option value="judul">Judul (A-Z)</option>
+                    <option value="qty">Jumlah Stok</option>
+                    <option value="harga">Harga</option>
+                </select>
+            </div>
+            <div class="filter-actions">
+                <button class="btn btn-secondary" @click="resetFilters" style="height:42px;">🔄 Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabel Data -->
+    <div class="card" style="padding:0;overflow:hidden;">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Kode / Judul</th>
+                        <th>Kategori</th>
+                        <th>UT-Daerah</th>
+                        <th>Rak</th>
+                        <th style="text-align:right;">Stok</th>
+                        <th style="text-align:right;">Safety</th>
+                        <th style="text-align:right;">Harga</th>
+                        <th style="text-align:center;">Status &amp; Catatan</th>
+                        <th style="text-align:center;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in filteredAndSortedStok" :key="item.kode">
+                        <td>
+                            <strong>{{ item.kode }}</strong><br>
+                            <span style="color:var(--text-muted);font-size:0.85rem;">{{ item.judul }}</span>
+                        </td>
+                        <td>{{ item.kategori }}</td>
+                        <td><span style="background:#f1f5f9;padding:4px 8px;border-radius:4px;font-weight:500;">{{ item.upbjj }}</span></td>
+                        <td><code>{{ item.lokasiRak }}</code></td>
+                        <td style="text-align:right;font-weight:600;">{{ item.qty | buah }}</td>
+                        <td style="text-align:right;color:var(--text-muted);">{{ item.safety | buah }}</td>
+                        <td style="text-align:right;font-weight:500;">{{ item.harga | rupiah }}</td>
+                        <td style="text-align:center;">
+                            <status-badge :qty="item.qty" :safety="item.safety" :catatan="item.catatanHTML"></status-badge>
+                        </td>
+                        <td style="text-align:center;">
+                            <div style="display:flex;gap:6px;justify-content:center;">
+                                <button class="btn btn-secondary btn-sm" @click="openEditModal(item)">✏️ Edit</button>
+                                <button class="btn btn-danger btn-sm" @click="deleteStok(item.kode)">🗑️ Hapus</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr v-if="filteredAndSortedStok.length === 0">
+                        <td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">
+                            📭 Tidak ada data yang sesuai filter.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <app-modal :visible="showEditModal" title="✏️ Edit Stok & Safety Bahan Ajar" @close="closeEditModal">
+        <p>Kode: <strong>{{ editForm.kode }}</strong> — {{ editForm.judul }}</p>
+        <form @submit.prevent="saveEdit">
+            <div class="form-group">
+                <label>Jumlah Stok (Qty)</label>
+                <input type="number" v-model.number="editForm.qty" min="0" class="form-control" required @keyup.enter="saveEdit">
+            </div>
+            <div class="form-group" style="margin-top:15px;">
+                <label>Safety Stock</label>
+                <input type="number" v-model.number="editForm.safety" min="0" class="form-control" required @keyup.enter="saveEdit">
+            </div>
+            <div class="form-group" style="margin-top:15px;">
+                <label>Catatan (HTML)</label>
+                <input type="text" v-model="editForm.catatanHTML" class="form-control">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" @click="closeEditModal">Batal</button>
+                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            </div>
+        </form>
+    </app-modal>
+</div>

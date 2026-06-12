@@ -1,0 +1,67 @@
+<div>
+    <div class="page-header">
+        <div>
+            <h2>Buat Delivery Order Baru</h2>
+            <p>Isi data pengiriman. Nomor DO dan Total Harga ter-generate otomatis.</p>
+        </div>
+    </div>
+    <div class="card" style="max-width:640px;">
+        <div class="card-title-bar"><h3>Form Input Delivery Order</h3></div>
+        <form @submit.prevent="submitOrder">
+            <div class="form-group">
+                <label>Nomor DO (Otomatis)</label>
+                <input type="text" :value="nextDoNumber" class="form-control" disabled
+                    style="background:#f1f5f9;font-weight:700;color:var(--ut-blue);">
+            </div>
+            <div class="form-group">
+                <label>NIM Mahasiswa <span style="color:red">*</span></label>
+                <input type="text" v-model.trim="form.nim" placeholder="043289123" required>
+            </div>
+            <div class="form-group">
+                <label>Nama Lengkap <span style="color:red">*</span></label>
+                <input type="text" v-model.trim="form.nama" placeholder="Budi Santoso" required>
+            </div>
+            <div class="form-group">
+                <label>Ekspedisi <span style="color:red">*</span></label>
+                <select v-model="form.ekspedisi" required>
+                    <option value="" disabled>Pilih Layanan</option>
+                    <option v-for="exp in pengirimanList" :key="exp.kode" :value="exp.nama">{{ exp.nama }}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Paket Bahan Ajar <span style="color:red">*</span></label>
+                <select v-model="form.paketCode" required>
+                    <option value="" disabled>Pilih Paket</option>
+                    <option v-for="p in paket" :key="p.kode" :value="p.kode">{{ p.kode }} — {{ p.nama }}</option>
+                </select>
+            </div>
+            <div v-if="selectedPaket" style="background:var(--success-bg);border:1px solid rgba(16,185,129,0.2);padding:16px;border-radius:var(--radius-md);margin-bottom:16px;animation:fadeIn 0.3s ease;">
+                <h4 style="color:var(--success);font-size:0.9rem;margin-bottom:6px;">📦 Detail Isi Paket:</h4>
+                <p style="font-size:0.875rem;margin-bottom:4px;"><strong>Nama:</strong> {{ selectedPaket.nama }}</p>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;">
+                    <span v-for="kode in selectedPaket.isi" :key="kode"
+                        style="background:#fff;border:1px solid var(--border-color);padding:3px 8px;border-radius:4px;font-size:0.75rem;font-weight:600;">
+                        📖 {{ kode }}
+                    </span>
+                </div>
+                <p style="font-size:0.875rem;"><strong>Harga:</strong> <span style="color:var(--ut-blue);font-weight:700;">{{ selectedPaket.harga | rupiah }}</span></p>
+            </div>
+            <div class="form-group">
+                <label>Tanggal Kirim <span style="color:red">*</span></label>
+                <input type="date" v-model="form.tanggalKirim" required>
+                <small v-if="form.tanggalKirim" style="color:var(--text-muted);margin-top:4px;display:block;">
+                    📅 {{ form.tanggalKirim | tglIndonesia }}
+                </small>
+            </div>
+            <div class="form-group">
+                <label>Total Harga (Otomatis)</label>
+                <input type="text" :value="form.total | rupiah" class="form-control" disabled
+                    style="background:#f1f5f9;font-weight:700;color:var(--success);">
+            </div>
+            <div class="modal-actions" style="margin-top:10px;">
+                <button type="button" class="btn btn-secondary" @click="resetForm">Reset</button>
+                <button type="submit" class="btn btn-primary">📤 Submit DO</button>
+            </div>
+        </form>
+    </div>
+</div>

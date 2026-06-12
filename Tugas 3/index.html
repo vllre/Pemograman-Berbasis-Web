@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SITTA UT — Sistem Informasi Tiras & Distribusi Bahan Ajar Universitas Terbuka">
+    <title>SITTA UT — Sistem Informasi Tiras & Distribusi</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+</head>
+<body>
+
+<!-- ============================================================
+     ROOT APP
+     ============================================================ -->
+<div class="app-wrapper" id="app" v-cloak>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <span class="brand">SITTA UT</span>
+                <span class="sub-brand">Tiras &amp; Distribusi</span>
+            </div>
+        </div>
+        <ul class="sidebar-menu">
+            <li :class="{ active: tab === 'dashboard' }">
+                <a href="#" @click.prevent="tab = 'dashboard'">🏠 Dashboard</a>
+            </li>
+            <li :class="{ active: tab === 'stok' }">
+                <a href="#" @click.prevent="tab = 'stok'">📦 Stok Bahan Ajar</a>
+            </li>
+            <li :class="{ active: tab === 'tracking' }">
+                <a href="#" @click.prevent="tab = 'tracking'">🚚 Tracking DO</a>
+            </li>
+            <li :class="{ active: tab === 'order' }">
+                <a href="#" @click.prevent="tab = 'order'">📋 Buat DO Baru</a>
+            </li>
+            <li style="margin-top: auto; padding-top: 50px;">
+                <a href="#" style="color: #ff8888;">🚪 Keluar</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="main-content">
+        <header class="top-bar">
+            <div class="user-info">
+                <h3 id="greeting">Selamat Datang di SITTA</h3>
+            </div>
+            <div class="app-title">
+                <strong>Sistem Informasi Tiras &amp; Distribusi UT</strong>
+            </div>
+        </header>
+
+        <main class="content-body">
+            <div class="container">
+
+                <!-- TAB: DASHBOARD -->
+                <div v-show="tab === 'dashboard'">
+                    <div class="page-header">
+                        <div>
+                            <h2>Dashboard Utama</h2>
+                            <p>Sistem Pemesanan &amp; Distribusi Bahan Ajar</p>
+                        </div>
+                    </div>
+                    <div class="card" style="background: linear-gradient(135deg, var(--ut-blue) 0%, var(--ut-blue-light) 100%); color:#fff;">
+                        <h2 style="font-weight:700; margin-bottom:8px; color:var(--ut-yellow);">Selamat Bekerja!</h2>
+                        <p style="opacity:0.9; max-width:600px; font-size:0.95rem;">
+                            SITTA dirancang untuk membantu Anda memantau ketersediaan stok bahan ajar di seluruh UT-Daerah (UPBJJ) secara real-time dan melacak pengiriman Delivery Order (DO) ke mahasiswa secara efisien.
+                        </p>
+                    </div>
+                    <div class="portal-grid">
+                        <a href="#" class="portal-card" @click.prevent="tab = 'stok'">
+                            <div class="icon">📦</div>
+                            <h3>Stok Bahan Ajar</h3>
+                            <p>Pantau, filter, edit, dan tambah data ketersediaan bahan ajar.</p>
+                        </a>
+                        <a href="#" class="portal-card" @click.prevent="tab = 'tracking'">
+                            <div class="icon">🚚</div>
+                            <h3>Tracking DO</h3>
+                            <p>Lacak status pengiriman berdasarkan Nomor DO atau NIM mahasiswa.</p>
+                        </a>
+                        <a href="#" class="portal-card" @click.prevent="tab = 'order'">
+                            <div class="icon">📋</div>
+                            <h3>Buat DO Baru</h3>
+                            <p>Input Delivery Order baru dengan nomor DO yang tergenerate otomatis.</p>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- TAB: STOK -->
+                <div v-show="tab === 'stok'">
+                    <ba-stock-table></ba-stock-table>
+                </div>
+
+                <!-- TAB: TRACKING -->
+                <div v-show="tab === 'tracking'">
+                    <do-tracking></do-tracking>
+                </div>
+
+                <!-- TAB: ORDER -->
+                <div v-show="tab === 'order'">
+                    <order-form></order-form>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+
+
+
+
+
+<!-- ============================================================
+     LOAD SCRIPTS
+     ============================================================ -->
+<script src="js/services/api.js"></script>
+<script src="js/components/status-badge.js"></script>
+<script src="js/components/app-modal.js"></script>
+<script src="js/components/stock-table.js"></script>
+<script src="js/components/do-tracking.js"></script>
+<script src="js/components/order-form.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

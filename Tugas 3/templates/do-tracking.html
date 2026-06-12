@@ -1,0 +1,77 @@
+<div>
+    <div class="page-header">
+        <div>
+            <h2>Tracking Delivery Order (DO)</h2>
+            <p>Cari berdasarkan Nomor DO atau NIM. Tekan <kbd>Enter</kbd> untuk cari, <kbd>Esc</kbd> untuk reset.</p>
+        </div>
+    </div>
+
+    <!-- Pencarian -->
+    <div class="card">
+        <div class="card-title-bar"><h3>Lacak Pengiriman</h3></div>
+        <div class="form-group" style="display:flex;gap:8px;">
+            <input type="text" v-model.trim="searchQuery"
+                placeholder="Nomor DO (DO2025-0001) atau NIM mahasiswa"
+                class="form-control" style="margin-bottom:0;"
+                @keyup="onSearchKeyup">
+            <button class="btn btn-primary" @click="performSearch" style="white-space:nowrap;">🔍 Cari</button>
+            <button class="btn btn-secondary" @click="searchQuery = ''" title="Reset (Esc)" style="white-space:nowrap;">✕</button>
+        </div>
+        <div style="margin-top:10px;">
+            <small style="color:var(--text-muted);">
+                DO tersedia:
+                <span v-for="(val, key) in trackingData" :key="key"
+                    style="background:#e2e8f0;padding:2px 6px;border-radius:4px;margin-right:5px;cursor:pointer;"
+                    @click="searchQuery = key; performSearch();">{{ key }}</span>
+            </small>
+        </div>
+    </div>
+
+    <!-- Hasil Tracking -->
+    <div class="card" v-if="activeTracking" style="animation:slideUp 0.3s ease-out;">
+        <div class="card-title-bar">
+            <h3>Status Pengiriman — {{ activeTracking.doKey }}</h3>
+            <span class="badge badge-success">{{ activeTracking.status }}</span>
+        </div>
+        <div style="margin-bottom:20px;font-size:0.95rem;">
+            <div class="grid grid-2">
+                <p><strong>NIM:</strong> {{ activeTracking.nim }}</p>
+                <p><strong>Nama:</strong> {{ activeTracking.nama }}</p>
+            </div>
+            <div class="grid grid-2" style="margin-top:8px;">
+                <p><strong>Ekspedisi:</strong> {{ activeTracking.ekspedisi }}</p>
+                <p><strong>Paket:</strong> {{ activeTracking.paket }}</p>
+            </div>
+            <div class="grid grid-2" style="margin-top:8px;">
+                <p><strong>Tanggal Kirim:</strong> {{ activeTracking.tanggalKirim | tglIndonesia }}</p>
+                <p><strong>Total:</strong> <strong style="color:var(--ut-blue);">{{ activeTracking.total | rupiah }}</strong></p>
+            </div>
+        </div>
+        <div style="border-top:1px solid var(--border-color);padding-top:15px;">
+            <h4>Riwayat Perjalanan Paket</h4>
+            <div class="timeline">
+                <div v-for="(step, idx) in activeTracking.perjalanan" :key="idx"
+                    class="timeline-item" :class="{ active: idx === 0 }">
+                    <div class="timeline-time">{{ step.waktu }}</div>
+                    <div class="timeline-desc">{{ step.keterangan }}</div>
+                </div>
+            </div>
+            <div style="background:#f8fafc;border:1px solid var(--border-color);padding:15px;border-radius:var(--radius-md);margin-top:20px;">
+                <h5 style="margin-bottom:10px;">➕ Update Status Perjalanan</h5>
+                <div class="form-group">
+                    <input type="text" v-model="newTimelineDesc"
+                        placeholder="Keterangan (misal: Sampai di Hub Surabaya)"
+                        class="form-control">
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <select v-model="newTimelineStatus" class="form-control" style="width:180px;margin-bottom:0;">
+                        <option value="Dalam Perjalanan">Dalam Perjalanan</option>
+                        <option value="Sampai Tujuan">Sampai Tujuan</option>
+                        <option value="Selesai Antar">Selesai Antar</option>
+                    </select>
+                    <button class="btn btn-primary btn-sm" @click="addTimelineStep">Tambah Status</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
